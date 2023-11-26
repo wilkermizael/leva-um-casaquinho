@@ -1,7 +1,9 @@
+import LeftSide from "../components/LeftSide";
+
 export default function HomePage(){
     return(
         <>
-        <p>Hello Pitual</p>
+        <LeftSide/>
         </>
     )
 }
