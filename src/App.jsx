@@ -2,14 +2,12 @@ import { BrowserRouter,Routes,Route } from "react-router-dom";
 import { styled } from "styled-components";
 import HomePage from "./Pages/HomePage";
 
-
 function App() {
 
   return (
     <PagesContainer>
     <BrowserRouter>
    
-     
         <Routes>
           <Route path="/" element={<HomePage />} />
         </Routes>

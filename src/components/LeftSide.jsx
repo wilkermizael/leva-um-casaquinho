@@ -1,26 +1,52 @@
-import { useState } from "react";
+import {useState } from "react";
 import styled from "styled-components"
 import { findCityInOpenWeather, getWheather} from "../Services/api";
 
-export default function LeftSide(){
+
+// eslint-disable-next-line react/prop-types
+export default function LeftSide({setDataWheather}){
+
     const [cityName, setNameCity] = useState('');
-    //const [geoLocation, setGeoLocation] = useState([])
-    
-    function findCity(e){
-        const LatAndLong = []
-        e.preventDefault()
-        findCityInOpenWeather(cityName)
-        .then((data) => {
-        LatAndLong.push(data[0].lat, data[0].lon)
-        
-        getWheather(LatAndLong)
-        .then((data)=>{
-            console.log(data)
-        })
-    })
-    .catch((error) => {
-    console.error("Erro ao obter dados da API:", error);
-  });   
+    const [temperature, setTemperature] = useState(0)
+    const [icon, setIcon] = useState('')
+    const [description, setDescription] = useState('')
+    const [isClicked, setIsClicked] = useState('flex-start')
+
+   
+  async function findCity(e) {
+    e.preventDefault();
+
+    try {
+      const openWeatherData = await findCityInOpenWeather(cityName);
+      const LatAndLong = [openWeatherData[0].lat, openWeatherData[0].lon];
+
+      const wheatherData = await getWheather(LatAndLong);
+      setDataWheather(wheatherData);
+      showWheather(wheatherData);
+    } catch (error) {
+      console.error("Erro na solicitação à API:", error);
+    }
+  }
+
+
+    function showWheather(data) {
+    if (data && data.main && data.main.temp) {
+        setTemperature(Math.trunc(data.main.temp - 273.15));
+        setIcon(data.weather[0].icon);
+        setDescription(data.weather[0].description)
+        console.log(data.weather[0].description)
+    } else {
+        setTemperature(0)
+        setIcon('02d');
+    }
+}
+    function handleClick(){
+        if(isClicked === 'flex-start'){
+            setIsClicked('flex-end')
+        }
+        else{
+            setIsClicked('flex-start')
+        }
     }
     return(
         <>
@@ -49,10 +75,21 @@ export default function LeftSide(){
                 </form>
             </Search>
             <BoxTemperature>
-
+                <img src={`https://openweathermap.org/img/wn/${icon?icon:'02d'}@4x.png`} alt="temperatura" />
+                <h1>{temperature} °C</h1>
+                <h2>{description}</h2>
             </BoxTemperature>
             <Info>
-
+                <InfoDate>
+                    <h2>25/11/2023</h2>
+                    <h3>Domingo, 15:00</h3>
+                </InfoDate>
+                <InfoButton isClicked={isClicked} onClick={handleClick}>
+                    <button>
+                       <ion-icon name="ellipse-outline"></ion-icon>
+                    </button>
+                    <h1>°F</h1>
+                </InfoButton>
             </Info>
         </Container>
         </>
@@ -134,15 +171,91 @@ const Search = styled.div`
 `;
 
 const BoxTemperature = styled.div`
-    width: 90%;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    align-items: center;
+    width: 75%;
     height: 20%;
     //background-color: blue;
+    img{
+        width: 40%;
+        height: 80%;
+    }
+    h1{
+        font-size: 50px;
+        font-weight: 400;
+        text-align: left;
+        padding: 10px;
+    }
+     h2{
+        font-size: 25px;
+        font-weight: 400;
+        text-align: left;
+        padding: 10px;
+    }
 `;
 
 const Info = styled.div`
-    width: 90%;
+    display: flex;
+    justify-content: space-around;
+    position: relative;
+    align-items: center;
+    flex-direction: column;
+    flex-wrap: wrap;
+    width: 75%;
     height: 20%;
+    margin-top: 15px;
     //background-color: purple;
+    border-top:2px solid lightgray ;
+`;
+const InfoDate = styled.div`
+    width: 60%;
+    height: 50%;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+    background-color: green;
+    h2{
+        font-size: 25px;
+        font-weight: 400;
+        text-align: left;
+        padding: 10px;
+    }
+    h3{
+        font-size: 25px;
+        font-weight: 400;
+        text-align: left;
+        padding: 10px;
+    }
+`;
+const InfoButton = styled.div`
+    width: 60%;
+    height: 40%;
+    display: flex;
+    justify-content:flex-start;//trocar aqui para flex-end
+    align-items: center;
+    button {
+    width: 70px;
+    height: 40px;
+    display: flex;
+    border: none;
+    margin-right:20px;
+    justify-content: ${props => props.isClicked};
+    align-items: center;
+    position: relative;
+    background-color: lightgray;        
+    border-radius: 20px;
+    }
+    ion-icon {
+    background-color: white;
+    width: 32px;
+    height: 32px;
+    color:white;
+    border-radius: 100%;
+    transition: transform 0.3s ease-in-out; 
+    }
 `;
 const InputGroup = styled.div`
   display: flex;
