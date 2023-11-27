@@ -68,8 +68,7 @@ const Header = styled.div`
   justify-content: flex-start;
   margin: auto;
   padding: 25px;
-  background-color: red;
-
+ 
   h1 {
     font-size: 3vw;
     font-weight: 400;
@@ -91,7 +90,7 @@ const CityName = styled.div`
   margin: auto;
   justify-content: flex-start;
   flex-direction: column;
-  background-color: red;
+  
 
   h1 {
     font-size: 8vw;
@@ -115,11 +114,9 @@ const BoxTemp = styled.div`
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    background-color: yellowgreen;
     div{
         width: 40%;
         height: 30%;
-        background-color: violet;
         border-radius: 20px;
         margin-left: 2vw;
     }
