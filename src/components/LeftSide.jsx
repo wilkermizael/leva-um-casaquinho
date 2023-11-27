@@ -1,4 +1,4 @@
-import {useState } from "react";
+import {useEffect, useState } from "react";
 import styled from "styled-components"
 import { findCityInOpenWeather, getWheather} from "../Services/api";
 
@@ -11,8 +11,9 @@ export default function LeftSide({setDataWheather}){
     const [icon, setIcon] = useState('')
     const [description, setDescription] = useState('')
     const [isClicked, setIsClicked] = useState('flex-start')
+    const [currentDate, setCurrentDate] = useState(new Date());
 
-   
+
   async function findCity(e) {
     e.preventDefault();
 
@@ -34,7 +35,6 @@ export default function LeftSide({setDataWheather}){
         setTemperature(Math.trunc(data.main.temp - 273.15));
         setIcon(data.weather[0].icon);
         setDescription(data.weather[0].description)
-        console.log(data.weather[0].description)
     } else {
         setTemperature(0)
         setIcon('02d');
@@ -43,21 +43,36 @@ export default function LeftSide({setDataWheather}){
     function handleClick(){
         if(isClicked === 'flex-start'){
             setIsClicked('flex-end')
+            const fahrenheit = Math.round((temperature*1.8) +32)
+            setTemperature(fahrenheit)
         }
         else{
             setIsClicked('flex-start')
+            const celcius = Math.round((temperature -32)/1.8)
+            setTemperature(celcius)
         }
+    
     }
+ useEffect(() => {
+    const intervalId = setInterval(() => {
+    setCurrentDate(new Date());
+  }, 1000 * 60); // Atualiza a cada minuto
+
+  return () => clearInterval(intervalId); // Limpa o intervalo quando o componente é desmontado
+
+}, []);
+function getDayOfWeek(day) {
+  const daysOfWeek = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+  return daysOfWeek[day];
+}
     return(
         <>
         <Container>
             <Header>
-                <div>
-                    <img src="../../public/img/casaquinho.png" alt="meu casaquinho" />
-                </div>
-                <div>
-                    <h1>Levo um casaquinho?</h1>
-                </div>
+                <img src="../../public/img/casaquinho.png" alt="meu casaquinho" />
+            
+                <h1>Levo um casaquinho?</h1>
+               
             </Header>
             <Search>
                 <form onSubmit={findCity}>
@@ -81,8 +96,8 @@ export default function LeftSide({setDataWheather}){
             </BoxTemperature>
             <Info>
                 <InfoDate>
-                    <h2>25/11/2023</h2>
-                    <h3>Domingo, 15:00</h3>
+                    <h2>{`${currentDate.getDate()}/${currentDate.getMonth() + 1}/${currentDate.getFullYear()}`}</h2>
+                    <h3>{`${getDayOfWeek(currentDate.getDay())}, ${currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}</h3>
                 </InfoDate>
                 <InfoButton isClicked={isClicked} onClick={handleClick}>
                     <button>
@@ -91,172 +106,176 @@ export default function LeftSide({setDataWheather}){
                     <h1>°F</h1>
                 </InfoButton>
             </Info>
+            <Footer>
+                <h1>Todos os direitos reservados 2023</h1>
+            </Footer>
         </Container>
         </>
     )
 }
 
 const Container = styled.div`
-display: flex;
-position: fixed;
-box-sizing:border-box;
-justify-content: flex-start;
-align-items: flex-start;
-flex-direction: column;
-top:0;
-left:0;
-padding-left: 10px;
-z-index: 100;
-width: 580px;
-height: 100vh;
-//background-color: red;
+  display: flex;
+  box-sizing: border-box;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-direction: column;
+  //position: fixed;
+  top: 0;
+  left: 0;
+  padding-left: 10px;
+  z-index: 100;
+  width: 90%;
+  height: 100vh;
 
+  @media (min-width: 768px) {
+    width: 30%;
+  }
 `;
+
 const Header = styled.div`
-    display: flex;
-    justify-content:space-around;
-    align-items: center;
-    width: 90%;
-    height: 20%;
-    //background-color: yellow;
-    div:nth-child(2){
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 70%;
+  height: 20%;
 
-        box-sizing: content-box;
-        width:350px ;
-        height:120px;
-        //background-color: orange;
-    }
-    h1{
+  h1 {
+    font-size: 2vw; /* Tamanho da fonte em relação à largura da viewport */
+    font-weight: 400;
+    text-align: left;
+    padding: 10px;
+  }
 
-        font-size: 50px;
-        font-weight: 400;
-        text-align: left;
-        padding: 10px;
-    }
-    img{
-    width: 120px;
-    height: 120px;
+  img {
+    width: 8vw; /* Tamanho da imagem em relação à largura da viewport */
+    height:     vw;
     border-radius: 50%;
     margin-left: 15px;
-    }
+  }
 `;
 
 const Search = styled.div`
-    width: 90%;
-    height:5%;
-    //background-color: gray;
-     form {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 5px;
-        width: 95%;
-        border-radius: 5px;
-        input{
-        width: 80%;
-        height: 35px;
-        background-color: lightgray;
-        border-radius: 20px;
-        border: none;
-        padding-left: 35px;
-        :focus {
-            border: 2px solid #ffb6b6;
-            margin: 0px;
-        }
-        }
-        
+  width: 90%;
+  height: 5%;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 95%;
+    border-radius: 5px;
+
+    input {
+      width: 80%;
+      height: 35px;
+      background-color: lightgray;
+      border-radius: 20px;
+      border: none;
+      padding-left: 35px;
+
+      :focus {
+        border: 2px solid #ffb6b6;
+        margin: 0px;
+      }
     }
-    
+  }
 `;
 
 const BoxTemperature = styled.div`
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    align-items: center;
-    width: 75%;
-    height: 20%;
-    //background-color: blue;
-    img{
-        width: 40%;
-        height: 80%;
-    }
-    h1{
-        font-size: 50px;
-        font-weight: 400;
-        text-align: left;
-        padding: 10px;
-    }
-     h2{
-        font-size: 25px;
-        font-weight: 400;
-        text-align: left;
-        padding: 10px;
-    }
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  align-items: center;
+  width: 75%;
+  height: 20%;
+
+  img {
+    width: 40%;
+    height: 80%;
+  }
+
+  h1 {
+    font-size: 5vw;
+    font-weight: 400;
+    text-align: left;
+    padding: 10px;
+  }
+
+  h2 {
+    font-size: 2.5vw;
+    font-weight: 400;
+    text-align: left;
+    padding: 10px;
+  }
 `;
 
 const Info = styled.div`
-    display: flex;
-    justify-content: space-around;
-    position: relative;
-    align-items: center;
-    flex-direction: column;
-    flex-wrap: wrap;
-    width: 75%;
-    height: 20%;
-    margin-top: 15px;
-    //background-color: purple;
-    border-top:2px solid lightgray ;
+  display: flex;
+  justify-content: space-around;
+  position: relative;
+  align-items: center;
+  flex-direction: column;
+  flex-wrap: wrap;
+  width: 75%;
+  height: 20%;
+  margin-top: 15px;
+  border-top: 2px solid lightgray;
 `;
+
 const InfoDate = styled.div`
-    width: 60%;
-    height: 50%;
-    display: flex;
-    justify-content: space-between;
-    flex-direction: column;
-    align-items: center;
-    background-color: green;
-    h2{
-        font-size: 25px;
-        font-weight: 400;
-        text-align: left;
-        padding: 10px;
-    }
-    h3{
-        font-size: 25px;
-        font-weight: 400;
-        text-align: left;
-        padding: 10px;
-    }
+  width: 60%;
+  height: 50%;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
+
+  h2,
+  h3 {
+    font-size: 1.5vw;
+    font-weight: 400;
+    text-align: left;
+    padding: 10px;
+  }
 `;
+
 const InfoButton = styled.div`
-    width: 60%;
-    height: 40%;
-    display: flex;
-    justify-content:flex-start;//trocar aqui para flex-end
-    align-items: center;
-    button {
-    width: 70px;
-    height: 40px;
+  width: 60%;
+  height: 40%;
+  display: flex;
+  justify-content:f;
+  align-items: center;
+
+  button {
+    width: 4vw;
+    height: 4vh;
     display: flex;
     border: none;
-    margin-right:20px;
+    margin-right: 2vw;
     justify-content: ${props => props.isClicked};
     align-items: center;
     position: relative;
-    background-color: lightgray;        
+    background-color: lightgray;
     border-radius: 20px;
-    }
-    ion-icon {
+  }
+
+  ion-icon {
     background-color: white;
-    width: 32px;
-    height: 32px;
-    color:white;
+    width: 1.8vw;
+    height: 3.5vh;
+    color: white;
     border-radius: 100%;
-    transition: transform 0.3s ease-in-out; 
-    }
+    transition: transform 0.3s ease-in-out;
+  }
+  h1{
+    width: 2vw;
+    height: 2vh;
+  }
 `;
+
 const InputGroup = styled.div`
   display: flex;
   align-items: center;
@@ -267,5 +286,21 @@ const InputGroup = styled.div`
 const IconWrapper = styled.div`
   position: absolute;
   left: 10px;
-  color: #555; // ajuste a cor conforme necessário
+  color: #555;
+`;
+
+const Footer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: column;
+  align-items: center;
+  width: 80%;
+  height: 20%;
+  font-family: 'Poppins';
+
+  h1 {
+    font-size: 1.5vw;
+    font-weight: 400;
+    text-align: left;
+  }
 `;

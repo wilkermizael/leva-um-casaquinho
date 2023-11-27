@@ -1,11 +1,10 @@
 import { BrowserRouter,Routes,Route } from "react-router-dom";
-import { styled } from "styled-components";
 import HomePage from "./Pages/HomePage";
 
 function App() {
 
   return (
-    <PagesContainer>
+    
     <BrowserRouter>
    
         <Routes>
@@ -13,16 +12,17 @@ function App() {
         </Routes>
      
     </BrowserRouter>
-  </PagesContainer>
+  
   );
 }
 
 export default App;
 
-const PagesContainer = styled.main`
-  background-color: #333333;
+/*const PagesContainer = styled.main`
+  display: flex;
+  justify-content: flex-start;
   width: 100vw;
   max-height: 100vh;
   
-`
+`*/
 //background-color: #8c11be;width: calc(100vw - 50px);
