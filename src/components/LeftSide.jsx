@@ -4,16 +4,24 @@ import { findCityInOpenWeather, getWheather} from "../Services/api";
 
 
 // eslint-disable-next-line react/prop-types
-export default function LeftSide({setDataWheather}){
+export default function LeftSide({setDataWeather, temperature, setTemperature}){
 
     const [cityName, setNameCity] = useState('');
-    const [temperature, setTemperature] = useState(0)
+    
     const [icon, setIcon] = useState('')
     const [description, setDescription] = useState('')
     const [isClicked, setIsClicked] = useState('flex-start')
     const [currentDate, setCurrentDate] = useState(new Date());
 
-
+   useEffect(() => {
+    
+    const storedWeatherData = localStorage.getItem('weatherData');
+    if (storedWeatherData) {
+      const weatherData = JSON.parse(storedWeatherData);
+      showWeather(weatherData);
+    }
+  }, []); 
+ 
   async function findCity(e) {
     e.preventDefault();
 
@@ -21,16 +29,18 @@ export default function LeftSide({setDataWheather}){
       const openWeatherData = await findCityInOpenWeather(cityName);
       const LatAndLong = [openWeatherData[0].lat, openWeatherData[0].lon];
 
-      const wheatherData = await getWheather(LatAndLong);
-      setDataWheather(wheatherData);
-      showWheather(wheatherData);
+      const weatherData = await getWheather(LatAndLong);
+       const objectStringfy = JSON.stringify(weatherData);
+       localStorage.setItem('weatherData', objectStringfy);
+       setDataWeather(weatherData);
+       showWeather(weatherData);
     } catch (error) {
       console.error("Erro na solicitação à API:", error);
     }
   }
 
 
-    function showWheather(data) {
+    function showWeather(data) {
     if (data && data.main && data.main.temp) {
         setTemperature(Math.trunc(data.main.temp - 273.15));
         setIcon(data.weather[0].icon);
@@ -56,9 +66,9 @@ export default function LeftSide({setDataWheather}){
  useEffect(() => {
     const intervalId = setInterval(() => {
     setCurrentDate(new Date());
-  }, 1000 * 60); // Atualiza a cada minuto
+  }, 1000 * 60); 
 
-  return () => clearInterval(intervalId); // Limpa o intervalo quando o componente é desmontado
+  return () => clearInterval(intervalId);
 
 }, []);
 function getDayOfWeek(day) {
@@ -68,12 +78,12 @@ function getDayOfWeek(day) {
     return(
         <>
         <Container>
-            <Header>
+            <HeaderLeft>
                 <img src="../../public/img/casaquinho.png" alt="meu casaquinho" />
             
                 <h1>Levo um casaquinho?</h1>
                
-            </Header>
+            </HeaderLeft>
             <Search>
                 <form onSubmit={findCity}>
                     <InputGroup>
@@ -91,9 +101,12 @@ function getDayOfWeek(day) {
             </Search>
             <BoxTemperature>
                 <img src={`https://openweathermap.org/img/wn/${icon?icon:'02d'}@4x.png`} alt="temperatura" />
-                <h1>{temperature} °C</h1>
-                <h2>{description}</h2>
+                <h1>{temperature}°C</h1>
+               
             </BoxTemperature>
+            <Description>
+                <h2>{description}</h2>
+            </Description>
             <Info>
                 <InfoDate>
                     <h2>{`${currentDate.getDate()}/${currentDate.getMonth() + 1}/${currentDate.getFullYear()}`}</h2>
@@ -115,25 +128,27 @@ function getDayOfWeek(day) {
 }
 
 const Container = styled.div`
+  //width: 30%;
+  //height: 100vh;
   display: flex;
   box-sizing: border-box;
   justify-content: flex-start;
-  align-items: flex-start;
+  align-items: center;
   flex-direction: column;
   //position: fixed;
   top: 0;
   left: 0;
   padding-left: 10px;
   z-index: 100;
-  width: 90%;
-  height: 100vh;
+ 
 
   @media (min-width: 768px) {
     width: 30%;
+    max-width: auto;
   }
 `;
 
-const Header = styled.div`
+const HeaderLeft = styled.div`
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -141,14 +156,14 @@ const Header = styled.div`
   height: 20%;
 
   h1 {
-    font-size: 2vw; /* Tamanho da fonte em relação à largura da viewport */
+    font-size: 2vw; 
     font-weight: 400;
     text-align: left;
     padding: 10px;
   }
 
   img {
-    width: 8vw; /* Tamanho da imagem em relação à largura da viewport */
+    width: 8vw;
     height:     vw;
     border-radius: 50%;
     margin-left: 15px;
@@ -156,20 +171,18 @@ const Header = styled.div`
 `;
 
 const Search = styled.div`
-  width: 90%;
+  display: flex;
+  justify-content:center;
+  align-items: center;
+  width: 75%;
   height: 5%;
-
   form {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
     gap: 5px;
     width: 95%;
     border-radius: 5px;
 
     input {
-      width: 80%;
+      width: 100%;
       height: 35px;
       background-color: lightgray;
       border-radius: 20px;
@@ -186,8 +199,8 @@ const Search = styled.div`
 
 const BoxTemperature = styled.div`
   display: flex;
+  box-sizing: border-box;
   justify-content: space-around;
-  flex-wrap: wrap;
   align-items: center;
   width: 75%;
   height: 20%;
@@ -204,14 +217,16 @@ const BoxTemperature = styled.div`
     padding: 10px;
   }
 
-  h2 {
+ 
+`;
+const Description = styled.div`
+ h2 {
     font-size: 2.5vw;
     font-weight: 400;
     text-align: left;
     padding: 10px;
   }
 `;
-
 const Info = styled.div`
   display: flex;
   justify-content: space-around;
@@ -250,8 +265,8 @@ const InfoButton = styled.div`
   align-items: center;
 
   button {
-    width: 4vw;
-    height: 4vh;
+    width: 3vw;
+    height: 3vh;
     display: flex;
     border: none;
     margin-right: 2vw;
@@ -260,12 +275,12 @@ const InfoButton = styled.div`
     position: relative;
     background-color: lightgray;
     border-radius: 20px;
+    cursor: pointer;
   }
 
   ion-icon {
     background-color: white;
-    width: 1.8vw;
-    height: 3.5vh;
+    font-size: 2em;
     color: white;
     border-radius: 100%;
     transition: transform 0.3s ease-in-out;
