@@ -4,37 +4,60 @@
     import styled from "styled-components"
 
 
-    export default function RightSide({dataWeather, setDataWeather, setClick}){
+    export default function RightSide({
+        dataWeather, 
+        setDataWeather, 
+        setClick,
+        cityName,
+        setCityName,
+        fahrenheit,
+        setLat,
+        setLon,
+        lat,
+        lon
+    }){
         
-        const [cityName, setCityName] = useState('Belo Horizonte');
-        const [lat, setLat] = useState()
-        const [lon, setLon] = useState()
+      
         const [min, setMin] = useState()
         const [max, setMax] = useState()
         const [humidity, setHumidity] = useState()
         const [wind, setWind] = useState()
         
-        useEffect(() => {
-        const storedWeatherData = localStorage.getItem('weatherData');
+        function convertTemp(){
+            const temp_MinCelsius = Math.round(dataWeather.main.temp_min -273,15)
+            const temp_MaxCelsius = Math.round(dataWeather.main.temp_max -273,15)
+            if(fahrenheit){
+               
+                const fahrenheit_Min = Math.round((temp_MinCelsius*1.8) +32)
+                const fahrenheit_Max = Math.round((temp_MaxCelsius*1.8) +32)
+                return[fahrenheit_Min, fahrenheit_Max]
+            }else{
+                return[temp_MinCelsius,temp_MaxCelsius]
+            }
+        }
+       
+        useEffect(() => {   
+        const storedWeatherData = localStorage.getItem('weatherLocalStorage');
         if (storedWeatherData) {
-        const weatherData = JSON.parse(storedWeatherData);
-        setDataWeather(weatherData);
+            const weatherLocalStorage = JSON.parse(storedWeatherData);
+            
+            if (JSON.stringify(weatherLocalStorage) !== JSON.stringify(dataWeather)) {
+                setDataWeather(weatherLocalStorage);
+            }
         }
 
         if (dataWeather && dataWeather.name) {
-        setCityName(dataWeather.name);
-        setLat(dataWeather.coord.lat);
-        setLon(dataWeather.coord.lon);
-        setMin(Math.round(dataWeather.main.temp_min -273,15));
-        setMax(Math.round(dataWeather.main.temp_max -273,15));
-        setHumidity(Math.round(dataWeather.main.humidity));
-        setWind(Math.trunc(dataWeather.wind.speed));
-        
-        
+            const arrayTemp =convertTemp()
+            setCityName(dataWeather.name);
+            setLat(dataWeather.coord.lat);
+            setLon(dataWeather.coord.lon);
+            setMin(arrayTemp[0])
+            setMax(arrayTemp[1])
+            setHumidity(Math.round(dataWeather.main.humidity));
+            setWind(Math.trunc(dataWeather.wind.speed));
         }
-    }, []);
+}, [dataWeather,fahrenheit]);
     function change(value){
-        console.log(value)
         if(value === 0){
             setClick(0)
         }else if(value === 1){
@@ -44,8 +67,10 @@
     return(
         <Container>
             <HeaderStyled>
+                
                 <h1 style={{cursor:"pointer"}} onClick={()=>change(0)}>Hoje</h1>
-                <h2 style={{cursor:"pointer"}} onClick={()=>change(1)}>Próximos dias</h2>
+                <h2 style={{cursor:"pointer"}} onClick={cityName ? () => change(1) : null}>Próximos dias</h2>
+                
             </HeaderStyled>
             <CityName>
                 <h1>{cityName}</h1>
@@ -58,11 +83,11 @@
             <BoxTemp>
                 <div>
                     <p>Mínima</p>
-                    {min? `${min}°C` :'0°C'}
+                    {min && fahrenheit? `${min}°F` :`${min}°C`}
                 </div>
                 <div>
                     <p>Máxima</p>
-                    {max? `${max}°C` :'0°C'}
+                    {max && fahrenheit? `${max}°F` :`${max}°C`}
                 </div>
                 <div>
                     <p>Umidade</p>

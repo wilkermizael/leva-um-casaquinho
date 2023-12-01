@@ -7,6 +7,10 @@ import NextDays from "../components/NextDays";
 export default function HomePage(){
     const [dataWeather, setDataWeather] = useState([])
     const [temperature, setTemperature] = useState(0)
+    const [cityName, setCityName] = useState();
+    const [lat, setLat] = useState()
+    const [lon, setLon] = useState()
+    const [fahrenheit, setFahrenheit] = useState(false)
     const [click, setClick] = useState(0)
     return(
         <Content>
@@ -14,20 +18,33 @@ export default function HomePage(){
          setDataWeather={setDataWeather}
         temperature={temperature} 
         setTemperature={setTemperature}
+        fahrenheit={fahrenheit}
+        setFahrenheit ={setFahrenheit}
         
         />
         {click === 0 ?
         <RightSide 
         dataWeather={dataWeather} 
         setDataWeather={setDataWeather}
-        setClick={setClick}/>
+        setClick={setClick}
+        cityName={cityName}
+        setCityName={setCityName}
+        fahrenheit={fahrenheit}
+        lat={lat}
+        setLat={setLat}
+        lon={lon}
+        setLon={setLon}
+        />
         :<NextDays 
         dataWeather={dataWeather} 
         setDataWeather={setDataWeather}
-        setClick={setClick}></NextDays>}
+        setClick={setClick}
+        cityName={cityName}
+        lat={lat}
+        lon={lon}/>
+        }
         
         
-
         </Content>
     )
 }

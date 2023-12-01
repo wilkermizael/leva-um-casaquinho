@@ -1,27 +1,45 @@
-import {useEffect, useState } from "react";
-import styled from "styled-components"
-import { findCityInOpenWeather, getWheather} from "../Services/api";
+/* eslint-disable react/prop-types */
+import { useEffect, useState } from "react";
+import styled from "styled-components";
+import { findCityInOpenWeather, getWheather } from "../Services/api";
 
+export default function LeftSide({
+  setDataWeather,
+  temperature,
+  setTemperature,
+  fahrenheit,
+  setFahrenheit,
+}) {
+  const [cityName, setNameCity] = useState("");
+  const [icon, setIcon] = useState("");
+  const [description, setDescription] = useState("");
+  const [isClicked, setIsClicked] = useState("flex-start");
+  const [currentDate, setCurrentDate] = useState(new Date());
 
-// eslint-disable-next-line react/prop-types
-export default function LeftSide({setDataWeather, temperature, setTemperature}){
+  /*function translateDescription("broken clouds"){
+   const translationMap = {
+        "clear sky": "Céu Limpo",
+        "few clouds": "Poucas Nuvens",
+        "scattered clouds": "Nuvens Dispersas",
+        'broken clouds': "Nuvens Quebradas",
+        "shower rain": "Chuviscando",
+        "rain": "Chuva",
+        "thunderstorm": "Raios",
+        "snow": "Neve",
+        "mist": "Misto"
+    };
 
-    const [cityName, setNameCity] = useState('');
-    
-    const [icon, setIcon] = useState('')
-    const [description, setDescription] = useState('')
-    const [isClicked, setIsClicked] = useState('flex-start')
-    const [currentDate, setCurrentDate] = useState(new Date());
+  
+  }*/
 
-   useEffect(() => {
-    
-    const storedWeatherData = localStorage.getItem('weatherData');
+  useEffect(() => {
+    const storedWeatherData = localStorage.getItem("dataLocalStorage");
     if (storedWeatherData) {
-      const weatherData = JSON.parse(storedWeatherData);
-      showWeather(weatherData);
+      const weatherLocalStorage = JSON.parse(storedWeatherData);
+      showWeather(weatherLocalStorage);
     }
-  }, []); 
- 
+  }, [setDataWeather]);
+
   async function findCity(e) {
     e.preventDefault();
 
@@ -30,101 +48,120 @@ export default function LeftSide({setDataWeather, temperature, setTemperature}){
       const LatAndLong = [openWeatherData[0].lat, openWeatherData[0].lon];
 
       const weatherData = await getWheather(LatAndLong);
-       const objectStringfy = JSON.stringify(weatherData);
-       localStorage.setItem('weatherData', objectStringfy);
-       setDataWeather(weatherData);
-       showWeather(weatherData);
+      const objectStringfy = JSON.stringify(weatherData);
+      localStorage.setItem("weatherLocalStorage", objectStringfy);
+      setDataWeather(weatherData);
+      showWeather(weatherData);
+    
+  
     } catch (error) {
       console.error("Erro na solicitação à API:", error);
     }
   }
 
-
-    function showWeather(data) {
+  function showWeather(data) {
     if (data && data.main && data.main.temp) {
-        setTemperature(Math.trunc(data.main.temp - 273.15));
-        setIcon(data.weather[0].icon);
-        setDescription(data.weather[0].description)
+      setTemperature(Math.trunc(data.main.temp - 273.15));
+      setIcon(data.weather[0].icon);
+      setDescription(data.weather[0].description);
     } else {
-        setTemperature(0)
-        setIcon('02d');
+      setTemperature(0);
+      setIcon("02d");
     }
-}
-    function handleClick(){
-        if(isClicked === 'flex-start'){
-            setIsClicked('flex-end')
-            const fahrenheit = Math.round((temperature*1.8) +32)
-            setTemperature(fahrenheit)
-        }
-        else{
-            setIsClicked('flex-start')
-            const celcius = Math.round((temperature -32)/1.8)
-            setTemperature(celcius)
-        }
-    
+  }
+  function handleClick() {
+    if (isClicked === "flex-start") {
+      setIsClicked("flex-end");
+      const fahrenheit = Math.round(temperature * 1.8 + 32);
+      setTemperature(fahrenheit);
+      setFahrenheit(true);
+    } else {
+      setIsClicked("flex-start");
+      const celcius = Math.round((temperature - 32) / 1.8);
+      setTemperature(celcius);
+      setFahrenheit(false);
     }
- useEffect(() => {
+  }
+  useEffect(() => {
     const intervalId = setInterval(() => {
-    setCurrentDate(new Date());
-  }, 1000 * 60); 
+      setCurrentDate(new Date());
+    }, 1000 * 60);
 
-  return () => clearInterval(intervalId);
+    return () => clearInterval(intervalId);
+  }, []);
+  function getDayOfWeek(day) {
+    const daysOfWeek = [
+      "Domingo",
+      "Segunda-feira",
+      "Terça-feira",
+      "Quarta-feira",
+      "Quinta-feira",
+      "Sexta-feira",
+      "Sábado",
+    ];
+    return daysOfWeek[day];
+  }
+  return (
+    <>
+      <Container>
+        <HeaderLeft>
+          <img src="../../public/img/casaquinho.png" alt="meu casaquinho" />
 
-}, []);
-function getDayOfWeek(day) {
-  const daysOfWeek = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
-  return daysOfWeek[day];
-}
-    return(
-        <>
-        <Container>
-            <HeaderLeft>
-                <img src="../../public/img/casaquinho.png" alt="meu casaquinho" />
-            
-                <h1>Levo um casaquinho?</h1>
-               
-            </HeaderLeft>
-            <Search>
-                <form onSubmit={findCity}>
-                    <InputGroup>
-                        <IconWrapper>
-                            <ion-icon name="search-outline"></ion-icon>
-                        </IconWrapper>
-                        <input
-                            placeholder="Procure por uma cidade"
-                            type="text"
-                            value={cityName}
-                            onChange={(e) => setNameCity(e.target.value)}
-                        />
-                   </InputGroup>
-                </form>
-            </Search>
-            <BoxTemperature>
-                <img src={`https://openweathermap.org/img/wn/${icon?icon:'02d'}@4x.png`} alt="temperatura" />
-                <h1>{temperature}°C</h1>
-               
-            </BoxTemperature>
-            <Description>
-                <h2>{description}</h2>
-            </Description>
-            <Info>
-                <InfoDate>
-                    <h2>{`${currentDate.getDate()}/${currentDate.getMonth() + 1}/${currentDate.getFullYear()}`}</h2>
-                    <h3>{`${getDayOfWeek(currentDate.getDay())}, ${currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}</h3>
-                </InfoDate>
-                <InfoButton isClicked={isClicked} onClick={handleClick}>
-                    <button>
-                       <ion-icon name="ellipse-outline"></ion-icon>
-                    </button>
-                    <h1>°F</h1>
-                </InfoButton>
-            </Info>
-            <Footer>
-                <h1>Todos os direitos reservados 2023</h1>
-            </Footer>
-        </Container>
-        </>
-    )
+          <h1>Levo um casaquinho?</h1>
+        </HeaderLeft>
+        <Search>
+          <form onSubmit={findCity}>
+            <InputGroup>
+              <IconWrapper>
+                <ion-icon name="search-outline"></ion-icon>
+              </IconWrapper>
+              <input
+                placeholder="Procure por uma cidade"
+                type="text"
+                value={cityName}
+                onChange={(e) => setNameCity(e.target.value)}
+              />
+            </InputGroup>
+          </form>
+        </Search>
+        <BoxTemperature>
+          <img
+            src={`https://openweathermap.org/img/wn/${
+              icon ? icon : "02d"
+            }@4x.png`}
+            alt="temperatura"
+          />
+          <h1>{temperature}</h1>
+          {fahrenheit ? <span>°F</span> : <span>°C</span>}
+        </BoxTemperature>
+        <Description>
+          <h2>{description}</h2>
+        </Description>
+        <Info>
+          <InfoDate>
+            <h2>{`${currentDate.getDate()}/${
+              currentDate.getMonth() + 1
+            }/${currentDate.getFullYear()}`}</h2>
+            <h3>{`${getDayOfWeek(
+              currentDate.getDay()
+            )}, ${currentDate.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}`}</h3>
+          </InfoDate>
+          <InfoButton isClicked={isClicked} onClick={handleClick}>
+            <button>
+              <ion-icon name="ellipse-outline"></ion-icon>
+            </button>
+            <h1>°F</h1>
+          </InfoButton>
+        </Info>
+        <Footer>
+          <h1>Todos os direitos reservados 2023</h1>
+        </Footer>
+      </Container>
+    </>
+  );
 }
 
 const Container = styled.div`
@@ -140,7 +177,6 @@ const Container = styled.div`
   left: 0;
   padding-left: 10px;
   z-index: 100;
- 
 
   @media (min-width: 768px) {
     width: 30%;
@@ -156,7 +192,7 @@ const HeaderLeft = styled.div`
   height: 20%;
 
   h1 {
-    font-size: 2vw; 
+    font-size: 2vw;
     font-weight: 400;
     text-align: left;
     padding: 10px;
@@ -164,7 +200,7 @@ const HeaderLeft = styled.div`
 
   img {
     width: 8vw;
-    height:     vw;
+    height: vw;
     border-radius: 50%;
     margin-left: 15px;
   }
@@ -172,7 +208,7 @@ const HeaderLeft = styled.div`
 
 const Search = styled.div`
   display: flex;
-  justify-content:center;
+  justify-content: center;
   align-items: center;
   width: 75%;
   height: 5%;
@@ -204,23 +240,27 @@ const BoxTemperature = styled.div`
   align-items: center;
   width: 75%;
   height: 20%;
-
   img {
     width: 40%;
     height: 80%;
   }
 
   h1 {
-    font-size: 5vw;
+    font-size: 5.5vw;
     font-weight: 400;
     text-align: left;
     padding: 10px;
   }
-
- 
+  span {
+    font-size: 4vw;
+    font-weight: 300;
+    position: relative;
+    top: -0.5vw;
+    right: 1vw;
+  }
 `;
 const Description = styled.div`
- h2 {
+  h2 {
     font-size: 2.5vw;
     font-weight: 400;
     text-align: left;
@@ -261,7 +301,7 @@ const InfoButton = styled.div`
   width: 60%;
   height: 40%;
   display: flex;
-  justify-content:f;
+  justify-content: f;
   align-items: center;
 
   button {
@@ -270,7 +310,7 @@ const InfoButton = styled.div`
     display: flex;
     border: none;
     margin-right: 2vw;
-    justify-content: ${props => props.isClicked};
+    justify-content: ${(props) => props.isClicked};
     align-items: center;
     position: relative;
     background-color: lightgray;
@@ -285,7 +325,7 @@ const InfoButton = styled.div`
     border-radius: 100%;
     transition: transform 0.3s ease-in-out;
   }
-  h1{
+  h1 {
     width: 2vw;
     height: 2vh;
   }
@@ -311,7 +351,7 @@ const Footer = styled.div`
   align-items: center;
   width: 80%;
   height: 20%;
-  font-family: 'Poppins';
+  font-family: "Poppins";
 
   h1 {
     font-size: 1.5vw;

@@ -1,18 +1,14 @@
-import { useEffect } from "react";
+/* eslint-disable react/prop-types */
 import styled from "styled-components";
 
-export default function NextDays(setDataWeather, setClick ){
-
-     useEffect(() => {
-        const storedWeatherData = localStorage.getItem('weatherData');
-        if (storedWeatherData) {
-        const weatherData = JSON.parse(storedWeatherData);
-        setDataWeather(weatherData);
-
-        }
-    }, []);
-
-     function change(value){
+export default function NextDays({
+        setClick,
+        cityName,
+        lat,
+        lon
+    } ){
+    
+    function change(value){ 
         if(value === 0){
             setClick(0)
         }else if(value === 1){
@@ -26,10 +22,10 @@ export default function NextDays(setDataWeather, setClick ){
                 <h2 style={{cursor:"pointer"}} onClick={()=>change(1)}>Próximos dias</h2>
             </HeaderStyled>
             <CityName>
-                <h1>cityName</h1>
+                <h1>{cityName}</h1>
                 <Location>
-                <h2>Lat:lat</h2>
-                <h3>Long:lon</h3>
+                <h2>{lat}</h2>
+                <h3>{lon}</h3>
                 </Location>
             </CityName>
         </Container>
@@ -73,7 +69,7 @@ const HeaderStyled = styled.div`
   }
 `;
 
-const CityName = styled.div`
+const CityName = styled.div`   
   width: 90%;
   height: 10%;
   display: flex;
