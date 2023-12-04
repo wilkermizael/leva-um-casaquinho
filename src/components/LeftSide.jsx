@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { findCityInOpenWeather, getWheather } from "../Services/api";
+import { findCityInOpenWeather, getWheather } from "../Services/api.js";
 
 export default function LeftSide({
   setDataWeather,

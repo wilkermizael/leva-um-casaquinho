@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const API_KEY = import.meta.env.VITE_WHEATHER_KEY;
-const BASE_KEY = import.meta.env.VITE_BASE_KEY;
+const API_KEY =import.meta.env.VITE_WHEATHER_KEY;
+const BASE_KEY =import.meta.env.VITE_BASE_KEY;
 
 export async function findCityInOpenWeather(cityName) {
   try {
