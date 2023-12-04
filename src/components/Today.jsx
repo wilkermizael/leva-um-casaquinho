@@ -61,10 +61,10 @@
         }
         if(celsius <=17  && min < 62){
             setCoat('Sim, você precisa levar um casaquinho!')
-            console.log(celsius, fahrenheit,"precisa")
+           
         }
         if( celsius >17  && min >62){
-            console.log(celsius, fahrenheit, "Não precisa")
+
             setCoat('Não, você não precisa levar um casaquinho!')
         }
 }, [dataWeather,fahrenheit, coat,celsius,fahrenheit]);
