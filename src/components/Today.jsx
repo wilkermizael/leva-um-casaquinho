@@ -20,11 +20,14 @@
       
         const [min, setMin] = useState()
         const [max, setMax] = useState()
+        const [celsius, setCelsius] =useState()
         const [humidity, setHumidity] = useState()
         const [wind, setWind] = useState()
+        const [coat, setCoat] = useState('')
         
         function convertTemp(){
             const temp_MinCelsius = Math.round(dataWeather.main.temp_min -273,15)
+            setCelsius(temp_MinCelsius)
             const temp_MaxCelsius = Math.round(dataWeather.main.temp_max -273,15)
             if(fahrenheit){
                
@@ -56,7 +59,15 @@
             setHumidity(Math.round(dataWeather.main.humidity));
             setWind(Math.trunc(dataWeather.wind.speed));
         }
-}, [dataWeather,fahrenheit]);
+        if(celsius <=17  && min < 62){
+            setCoat('Sim, você precisa levar um casaquinho!')
+            console.log(celsius, fahrenheit,"precisa")
+        }
+        if( celsius >17  && min >62){
+            console.log(celsius, fahrenheit, "Não precisa")
+            setCoat('Não, você não precisa levar um casaquinho!')
+        }
+}, [dataWeather,fahrenheit, coat,celsius,fahrenheit]);
     function change(value){
         if(value === 0){
             setClick(0)
@@ -98,6 +109,8 @@
                     {wind? `${wind}m/s`: '0m/s'}
                 </div>
             </BoxTemp>
+            <DescriptionStyled>{coat}</DescriptionStyled>
+            <Footer>Dados fornecidos pela <a href="http://https://openweathermap.org/">Open Weather API</a></Footer>
         </Container>
     )
 }
@@ -185,4 +198,28 @@ const BoxTemp = styled.div`
         color:#FFFFFF;
         
     }
+`;
+
+const DescriptionStyled = styled.label`
+width: 90%;
+font-size: 1.5vw;
+font-weight: 400;
+font-style: italic;
+color: #AFADAD;
+`;
+
+const Footer = styled.label`
+display: flex;
+justify-content: flex-start;
+align-items: flex-end;
+padding-bottom:20px ;
+width: 90%;
+height: 18%;
+font-size: 1.5vw;
+font-weight: 400;
+font-style: italic;
+color: #AFADAD;
+a{
+    padding-left: 10px;
+}
 `;

@@ -24,8 +24,8 @@ export default function NextDays({
             <CityName>
                 <h1>{cityName}</h1>
                 <Location>
-                <h2>{lat}</h2>
-                <h3>{lon}</h3>
+                <h2>Lat:{lat}</h2>
+                <h3>Long:{lon}</h3>
                 </Location>
             </CityName>
         </Container>

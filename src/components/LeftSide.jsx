@@ -305,6 +305,7 @@ const InfoButton = styled.div`
   align-items: center;
 
   button {
+
     width: 3vw;
     height: 3vh;
     display: flex;

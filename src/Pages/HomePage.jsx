@@ -1,6 +1,6 @@
 import { useState } from "react";
 import LeftSide from "../components/LeftSide";
-import RightSide from "../components/RightSide";
+import Today from "../components/Today";
 import styled from "styled-components";
 import NextDays from "../components/NextDays";
 
@@ -23,7 +23,7 @@ export default function HomePage(){
         
         />
         {click === 0 ?
-        <RightSide 
+        <Today 
         dataWeather={dataWeather} 
         setDataWeather={setDataWeather}
         setClick={setClick}
