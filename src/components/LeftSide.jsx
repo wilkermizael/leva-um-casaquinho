@@ -105,7 +105,7 @@ export default function LeftSide({
     <>
       <Container>
         <HeaderLeft>
-          <img src="../../public/img/casaquinho.png" alt="meu casaquinho" />
+          <img src="https://img.freepik.com/vetores-premium/desenho-de-um-casaco-vermelho-com-capuz_410516-79143.jpg?w=2000" alt="meu casaquinho" />
 
           <h1>Levo um casaquinho?</h1>
         </HeaderLeft>
