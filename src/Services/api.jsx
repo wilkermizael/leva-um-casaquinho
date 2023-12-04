@@ -1,12 +1,11 @@
 import axios from "axios";
 
-const API_KEY = import.meta.env.VITE_WHEATHER_KEY;
-const BASE_KEY = import.meta.env.VITE_BASE_KEY;
-//const BASE_URL = "http://api.openweathermap.org/geo/1.0/direct";
+//const API_KEY = import.meta.env.VITE_WHEATHER_KEY;
+//const BASE_KEY = import.meta.env.VITE_BASE_KEY;
 
 export async function findCityInOpenWeather(cityName) {
   try {
-    const response = await axios.get(`${BASE_KEY}?q=${cityName}&limit=1&appid=${API_KEY}`);
+    const response = await axios.get(`${import.meta.env.VITE_BASE_KEY}?q=${cityName}&limit=1&appid=${import.meta.env.VITE_WHEATHER_KEY}`);
     return response.data;
   } catch (error) {
     console.error("Erro na solicitação à API:", error);
