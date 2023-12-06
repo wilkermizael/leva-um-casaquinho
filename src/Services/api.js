@@ -3,7 +3,9 @@ import axios from "axios";
 const API_KEY =import.meta.env.VITE_WHEATHER_KEY;
 const BASE_KEY =import.meta.env.VITE_BASE_KEY;
 
+
 export async function findCityInOpenWeather(cityName) {
+  console.log(BASE_KEY);
   try {
     const response = await axios.get(`${BASE_KEY}/geo/1.0/direct?q=${cityName}&limit=1&appid=${API_KEY}`);
     return response.data;

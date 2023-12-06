@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { findCityInOpenWeather, getWheather } from "../Services/api.js";
+import InfoButton from "./ButtonTemp.jsx";
 
 export default function LeftSide({
   setDataWeather,
@@ -13,24 +14,8 @@ export default function LeftSide({
   const [cityName, setNameCity] = useState("");
   const [icon, setIcon] = useState("");
   const [description, setDescription] = useState("");
-  const [isClicked, setIsClicked] = useState("flex-start");
+  const [isClicked, setIsClicked] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
-
-  /*function translateDescription("broken clouds"){
-   const translationMap = {
-        "clear sky": "Céu Limpo",
-        "few clouds": "Poucas Nuvens",
-        "scattered clouds": "Nuvens Dispersas",
-        'broken clouds': "Nuvens Quebradas",
-        "shower rain": "Chuviscando",
-        "rain": "Chuva",
-        "thunderstorm": "Raios",
-        "snow": "Neve",
-        "mist": "Misto"
-    };
-
-  
-  }*/
 
   useEffect(() => {
     const storedWeatherData = localStorage.getItem("dataLocalStorage");
@@ -38,7 +23,7 @@ export default function LeftSide({
       const weatherLocalStorage = JSON.parse(storedWeatherData);
       showWeather(weatherLocalStorage);
     }
-  }, [setDataWeather]);
+  }, [setDataWeather,setFahrenheit,setTemperature]);
 
   async function findCity(e) {
     e.preventDefault();
@@ -69,7 +54,8 @@ export default function LeftSide({
       setIcon("02d");
     }
   }
-  function handleClick() {
+  /*function handleClick() {
+    setIsClicked((prevState)=> !prevState)
     if (isClicked === "flex-start") {
       setIsClicked("flex-end");
       const fahrenheit = Math.round(temperature * 1.8 + 32);
@@ -81,7 +67,7 @@ export default function LeftSide({
       setTemperature(celcius);
       setFahrenheit(false);
     }
-  }
+  }*/
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCurrentDate(new Date());
@@ -149,12 +135,13 @@ export default function LeftSide({
               minute: "2-digit",
             })}`}</h3>
           </InfoDate>
-          <InfoButton isClicked={isClicked} onClick={handleClick}>
-            <button>
-              <ion-icon name="ellipse-outline"></ion-icon>
-            </button>
-            <h1>°F</h1>
-          </InfoButton>
+          <InfoButton 
+          setIsClicked={setIsClicked} 
+          isClicked={isClicked}
+          setFahrenheit={setFahrenheit}
+          setTemperature={setTemperature}
+          temperature={temperature}
+          />
         </Info>
         <Footer>
           <h1>Todos os direitos reservados 2023</h1>
@@ -165,8 +152,6 @@ export default function LeftSide({
 }
 
 const Container = styled.div`
-  //width: 30%;
-  //height: 100vh;
   display: flex;
   box-sizing: border-box;
   justify-content: flex-start;
@@ -297,7 +282,7 @@ const InfoDate = styled.div`
   }
 `;
 
-const InfoButton = styled.div`
+/*const InfoButton = styled.div`
   width: 60%;
   height: 40%;
   display: flex;
@@ -330,7 +315,7 @@ const InfoButton = styled.div`
     width: 2vw;
     height: 2vh;
   }
-`;
+`;*/
 
 const InputGroup = styled.div`
   display: flex;
