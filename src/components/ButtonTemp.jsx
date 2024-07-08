@@ -34,8 +34,8 @@ const InfoButton = ({setIsClicked, isClicked,setTemperature,setFahrenheit,temper
 
 const StyledInfoButton = styled.label`
   background-color: #E9E9EA;
-  width: 4rem;
-  height: 2rem;
+  width: 4dvw;
+  height: 3dvh;
   border-radius: 1rem;
   display: flex;
   align-items: center;
@@ -56,7 +56,7 @@ const StyledInfoButton = styled.label`
     
     width: 2rem;
     height: 2rem;
-    border-radius: 10rem;
+    border-radius: 50%;
     box-shadow: 1px 1px 3px gray;
     background-color: #FFF;
     left: 0;
@@ -64,8 +64,8 @@ const StyledInfoButton = styled.label`
     transition: left 0.3s ease;
   }
     input:checked + span {
-    left: auto;
-    right: 0;
+    left: 60%;
+    //right: 0;
   }
 `;
 
