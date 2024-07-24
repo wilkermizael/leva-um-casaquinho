@@ -119,7 +119,7 @@
             
             </TypeBot>*/}
              <Bubble 
-                  typebot="input"
+                  typebot="salao"
                   theme={{ button: { backgroundColor: "#0042DA" } }}/>
             <DescriptionStyled>{coat}</DescriptionStyled>
             <Footer>Política Privacidade
