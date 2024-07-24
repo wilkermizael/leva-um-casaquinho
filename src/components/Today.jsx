@@ -1,5 +1,5 @@
     /* eslint-disable react/prop-types */
-
+    import { Bubble } from "@typebot.io/react";
     import { useEffect, useState} from "react"
     import styled from "styled-components"
     import { Standard } from "@typebot.io/react";
@@ -113,15 +113,13 @@
                     {wind? `${wind}m/s`: '0m/s'}
                 </div>
             </BoxTemp>
-            <TypeBot height={typeBotHeight} >
-                <div onClick={handleTypeBotClick}></div>
-                <Standard
-                    typebot="product-recommendation-jp9tud9"
-                    style={{ width: "100%", height: "600px" }}
-                    
-                    
-                />
-            </TypeBot>
+            {/* <TypeBot height={typeBotHeight} >
+                 <Bubble typebot="input"
+                  theme={{ button: { backgroundColor: "#0042DA" } }}/>
+            
+            </TypeBot>*/}
+             <Bubble typebot="input"
+                  theme={{ button: { backgroundColor: "#0042DA" } }}/>
             <DescriptionStyled>{coat}</DescriptionStyled>
             <Footer>Política Privacidade
 A sua privacidade é importante para nós. É política do winikii respeitar a sua privacidade em relação a qualquer informação sua que possamos coletar no site winikii, e outros sites que possuímos e operamos.
