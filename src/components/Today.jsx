@@ -119,7 +119,7 @@
             
             </TypeBot>*/}
              <Bubble 
-                  typebot="salao"
+                  typebot="input"
                   apiHost= "https://typechat.winikii.com"
                   theme={{ button: { backgroundColor: "#0042DA" } }}/>
             <DescriptionStyled>{coat}</DescriptionStyled>
