@@ -118,7 +118,8 @@
                   theme={{ button: { backgroundColor: "#0042DA" } }}/>
             
             </TypeBot>*/}
-             <Bubble typebot="input"
+             <Bubble 
+                  typebot="input"
                   theme={{ button: { backgroundColor: "#0042DA" } }}/>
             <DescriptionStyled>{coat}</DescriptionStyled>
             <Footer>Política Privacidade
